@@ -20,7 +20,10 @@
         packages = with pkgs; [
           (python.withPackages (
             ps: with ps; [
+              yacv-server
+              inotify
               cadquery
+              build123d
               cq-kit
               pyright
               black
