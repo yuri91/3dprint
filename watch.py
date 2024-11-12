@@ -1,4 +1,5 @@
-# Optional: enable logging to see what's happening
+#!/usr/bin/env python3
+
 import logging
 import sys
 import os
@@ -6,40 +7,47 @@ import traceback
 import importlib
 import importlib.util
 import inotify.adapters
+import webbrowser
 
 logging.basicConfig(level=logging.INFO)
 
-from yacv_server import show, export_all  # Check out other exported methods for more features!
+from yacv_server import show
 
-file_path = os.path.abspath(sys.argv[1])
+model_name = sys.argv[1]
+module_name = "models." + model_name
 
-def load(path, name):
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+module = importlib.import_module(module_name)
+module.run(show)
 
-def run():
-    m = load(file_path, "model")
-    m.run(show)
+def reload_and_run():
+    global module
+    module = importlib.reload(module)
+    module.run(show)
 
-run()
-
-def watch(path, cb):
-    dir_path = os.path.dirname(path)
-    file_name = os.path.basename(path)
+def watch():
+    dir_path = os.path.dirname(os.path.abspath(__file__)) + "/models"
+    file_name = model_name + ".py"
     i = inotify.adapters.Inotify()
     i.add_watch(dir_path)
-    for event in i.event_gen(yield_nones=False):
-        (_, type_names, path, filename) = event
-        if filename != file_name:
-            continue
-        if "IN_CLOSE_WRITE" not in type_names:
-            continue
-        logging.info(f'Reloading...')
-        try:
-            cb()
-        except Exception:
-            traceback.print_exc()
+    try:
+        for event in i.event_gen(yield_nones=False):
+            (_, type_names, path, filename) = event
+            if filename != file_name:
+                continue
+            if "IN_CLOSE_WRITE" not in type_names:
+                continue
+            logging.info(f'Reloading...')
+            try:
+                reload_and_run()
+            except KeyboardInterrupt:
+                print("Exiting...")
+                return
+            except Exception:
+                traceback.print_exc()
+    except KeyboardInterrupt:
+        print("Exiting...")
+        return
 
-watch(file_path, run)
+webbrowser.open_new("https://yeicor-3d.github.io/yet-another-cad-viewer/")
+
+watch()

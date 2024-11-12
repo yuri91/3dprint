@@ -1,27 +1,27 @@
+#!/usr/bin/env python3
+
 import logging
 import sys
-import os
 import importlib
 import importlib.util
 import build123d.exporters3d
 
 logging.basicConfig(level=logging.INFO)
 
-file_path = os.path.abspath(sys.argv[1])
-base = os.path.basename(file_path).removesuffix(".py")
+model_name = sys.argv[1]
+module_name = "models." + model_name
 
-def load(path, name):
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+def load(name):
+    print(f"Loading {name}...")
+    module = importlib.import_module(name)
     return module
 
 def show(*args, names):
     for (a, n) in zip(args, names):
-        build123d.exporters3d.export_step(a, f"exports/{base}-{n}.step")
+        build123d.exporters3d.export_step(a, f"exports/{model_name}-{n}.step")
 
 def run():
-    m = load(file_path, "model")
+    m = load(module_name)
     m.run(show)
 
 run()
