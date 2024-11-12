@@ -14,6 +14,11 @@
         ];
       };
       python = cq-flake.outputs.packages.${system}.python;
+      build123d = cq-flake.outputs.packages.${system}.build123d;
+      bd_warehouse = pkgs.callPackage ./bd_warehouse.nix {
+        inherit python;
+        inherit (python.pkgs) buildPythonPackage setuptools setuptools_scm build123d ;
+      };
     in
     {
       devShells.${system}.default = pkgs.mkShell {
@@ -24,6 +29,7 @@
               inotify
               cadquery
               build123d
+              bd_warehouse
               cq-kit
               pyright
               black
