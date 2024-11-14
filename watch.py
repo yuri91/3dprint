@@ -9,20 +9,32 @@ import importlib.util
 import inotify.adapters
 import webbrowser
 
+from util import get_args_names
+
 logging.basicConfig(level=logging.INFO)
 
-from yacv_server import show
+import yacv_server
+
+def export(*parts, **kwargs):
+    pass
+
+def show(*parts, names=None):
+    if names is None:
+        mynames = get_args_names()
+    else:
+        mynames = names
+    yacv_server.show(*parts, names=mynames)
 
 model_name = sys.argv[1]
 module_name = "models." + model_name
 
 module = importlib.import_module(module_name)
-module.run(show)
+module.run(show, export)
 
 def reload_and_run():
     global module
     module = importlib.reload(module)
-    module.run(show)
+    module.run(show, export)
 
 def watch():
     dir_path = os.path.dirname(os.path.abspath(__file__)) + "/models"

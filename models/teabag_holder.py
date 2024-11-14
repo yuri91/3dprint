@@ -1,4 +1,5 @@
 from build123d import *  # Also works with cadquery objects!
+from bd_warehouse.fastener import SocketHeadCapScrew, ClearanceHole
 
 thickness = 1.5
 
@@ -37,9 +38,12 @@ hook_thickness = 2.5
 hook_w = 25.0
 hook_d = 40.0
 hook_h = 25.0
+hook_overhang = 15
+hook_screw_1_y = 8
+hook_screw_2_y = 8 + hook_d/2
 hook_fillet = 1.0
 
-def run(show):
+def run(show, export):
     with BuildPart() as shell:
         # base shell
         Box(box_w, box_l, box_h)
@@ -100,6 +104,7 @@ def run(show):
     holder = shell.part + pocket.part + cap_holder.part
 
 
+    # cap
     with BuildPart() as cap:
         with BuildSketch(frontf.translate((-box_w/2, 0, box_h))) as c2:
             Triangle(a=cap_fill_w+cap_tolerance, b=cap_fill_w-cap_tolerance, C=90, rotation=0, align=(Align.MIN, Align.MAX))
@@ -107,9 +112,28 @@ def run(show):
             mirror(about=Plane.YZ.offset(box_w/2))
             make_hull()
         extrude(amount=-(box_l+thickness))
-        topf = cap.faces().sort_by(Axis.Z)[-1]
-        with BuildSketch(sidef.translate((0, 0, box_h))) as h:
-            Rectangle(hook_w, hook_d, align=(Align.MAX, Align.MIN))
 
-    show(holder, cap, h, names=["holder", "cap", "h"])
+    with Locations((0, -box_l/2 + hook_screw_1_y, box_h/2 + hook_thickness)):
+        screw = SocketHeadCapScrew(size="M2-0.4", length=6, simple=False, align=(Align.CENTER, Align.MAX, Align.MAX)).translate((0, -box_l/2 + hook_screw_1_y, box_h/2 + hook_thickness))
+    #hook
+    with BuildPart() as hook:
+        with BuildSketch(topf.translate((0, 0, 0))) as h:
+            Rectangle(hook_w, hook_d+hook_overhang, align=(Align.CENTER, Align.MAX))
+        p = extrude(amount=hook_thickness)
+        with Locations((0, -box_l/2 + hook_screw_1_y, box_h/2 + hook_thickness)):
+            ClearanceHole(screw, counter_sunk=True)
+        with BuildSketch(sidef.translate((box_w/2, -hook_overhang-thickness, box_h))):
+            with BuildLine() as l:
+                s1 = Line((0, 0), (hook_thickness, 0))
+                s2 = PolarLine(s1 @ 0, hook_h + hook_thickness, 90)
+                s3 = PolarLine(s1 @ 1, hook_h, 90)
+                s4 = PolarLine(s2 @ 1, hook_d + hook_thickness, hook_a-90)
+                s5 = PolarLine(s3 @ 1, hook_d, hook_a-90)
+                s6 = Line(s4 @ 1, s5 @ 1 )
+            make_face()
+            mirror(about=Plane.YZ, mode=Mode.REPLACE)
+        extrude(amount=hook_w/2, both=True)
+
+    show(holder, cap, hook, screw)
+    export(holder, cap)
 

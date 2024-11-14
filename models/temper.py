@@ -3,7 +3,12 @@ import cadquery as cq
 
 import build123d as b3d
 
-def run(show):
+def cq_to_bd(cq_part):
+    wrapper = b3d.Solid.make_box(1,1,1)
+    wrapper.wrapped = cq_part.toOCC()
+    return wrapper
+
+def run(show, export):
     self_dir = os.path.dirname(os.path.abspath(__file__))
     profile_path = self_dir + "/../imports/temper-bottomplate.dxf"
 
@@ -46,8 +51,7 @@ def run(show):
 
     right = left.mirror("YZ")
 
-    left_123 = b3d.Solid.make_box(1,1,1)
-    right_123 = b3d.Solid.make_box(1,1,1)
-    left_123.wrapped = left.toOCC()
-    right_123.wrapped = right.toOCC()
-    show(left_123, right_123, names = ["left", "right"])
+    left = cq_to_bd(left)
+    right = cq_to_bd(right)
+    show(left, right)
+    export(left, right)

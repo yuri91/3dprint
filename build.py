@@ -6,6 +6,8 @@ import importlib
 import importlib.util
 import build123d.exporters3d
 
+from util import get_args_names
+
 logging.basicConfig(level=logging.INFO)
 
 model_name = sys.argv[1]
@@ -16,13 +18,25 @@ def load(name):
     module = importlib.import_module(name)
     return module
 
-def show(*args, names):
+def export_impl(*args, names):
     for (a, n) in zip(args, names):
+        if hasattr(a, "part"):
+            a = a.part
         build123d.exporters3d.export_step(a, f"exports/{model_name}-{n}.step")
+
+def export(*args, names=None):
+    if names is None:
+        mynames = get_args_names()
+    else:
+        mynames = names
+    export_impl(*args, names=mynames)
+
+def show(*args, **kwargs):
+    pass
 
 def run():
     m = load(module_name)
-    m.run(show)
+    m.run(show, export)
 
 run()
 
