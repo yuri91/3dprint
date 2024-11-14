@@ -25,11 +25,7 @@ def export_impl(*args, names):
         build123d.exporters3d.export_step(a, f"exports/{model_name}-{n}.step")
 
 def export(*args, names=None):
-    if names is None:
-        mynames = get_args_names()
-    else:
-        mynames = names
-    export_impl(*args, names=mynames)
+    export_impl(*args, names=names if names is not None else get_args_names())
 
 def show(*args, **kwargs):
     pass

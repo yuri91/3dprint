@@ -19,11 +19,7 @@ def export(*parts, **kwargs):
     pass
 
 def show(*parts, names=None):
-    if names is None:
-        mynames = get_args_names()
-    else:
-        mynames = names
-    yacv_server.show(*parts, names=mynames)
+    yacv_server.show(*parts, names=names if names is not None else get_args_names())
 
 model_name = sys.argv[1]
 module_name = "models." + model_name
