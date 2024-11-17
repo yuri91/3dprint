@@ -29,7 +29,7 @@ opening_bottom_fillet = 7.0
 cap_fill_w = 3.0
 cap_fill_a = 45.0
 cap_fillet = 0.30
-cap_tolerance = 0.15
+cap_tolerance = 0.20
 
 fillet_amount = 0.5
 
