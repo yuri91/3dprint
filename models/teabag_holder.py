@@ -144,6 +144,6 @@ def run(show, export):
         with Locations(topf.translate((0, -box_l/2 + hook_screw_2_y, hook_thickness))):
             ClearanceHole(screw, counter_sunk=True)
 
-    show(holder, cap, hook, sidef)
+    show(holder, cap, hook)
     export(holder, cap, hook)
 
