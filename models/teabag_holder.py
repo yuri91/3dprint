@@ -1,5 +1,6 @@
 from build123d import *  # Also works with cadquery objects!
 from bd_warehouse.fastener import SocketHeadCapScrew, HexNut, ClearanceHole
+import copy
 
 thickness = 1.5
 
@@ -98,15 +99,15 @@ def run(show, export):
         with BuildSketch(frontf.translate((-box_w/2, 0, box_h))) as c1:
             Triangle(a=cap_fill_w, b=cap_fill_w, C=90, rotation=180, align=(Align.MAX, Align.MIN))
             mirror(about=Plane.YZ.offset(box_w/2))
-            #t=fillet(c1.vertices()[0], radius=cap_fillet)
         extrude(amount=-box_l-thickness)
         f1, f2, *_ = cap_holder.edges().sort_by_distance(topf.center());
         fillet([f1, f2], radius=cap_fillet)
 
     holder = shell.part + pocket.part + cap_holder.part
+    LinearJoint(label="cap", to_part=holder, axis=Axis.Y)
 
     # screw
-    screw = SocketHeadCapScrew(size="M2-0.4", length=6, simple=True)
+    screw = SocketHeadCapScrew(size="M2-0.4", length=4, simple=True)
     nut = HexNut(size="M2-0.4")
 
     # cap
@@ -119,9 +120,15 @@ def run(show, export):
         f1, *_, f2 = cap.edges().sort_by(Axis.X);
         fillet([f1, f2], radius=cap_fillet)
         with Locations(-topf.translate((0, -box_l/2 + hook_screw_1_y, -cap_fill_w))):
-            ClearanceHole(nut, captive_nut=True)
+            h1=ClearanceHole(nut, captive_nut=True)
+            LinearJoint(label="nut1", axis=Axis.Z.located(nut.hole_locations[-1]))
         with Locations(-topf.translate((0, -box_l/2 + hook_screw_2_y, -cap_fill_w))):
             ClearanceHole(nut, captive_nut=True)
+            LinearJoint(label="nut2", axis=Axis.Z.located(nut.hole_locations[-1]))
+        RigidJoint(label="holder", joint_location=cap.location)
+        h1p = h1.position + Vector(0, 0, cap_fill_w + hook_thickness)
+        RigidJoint(label="hook_screw_1", joint_location=Location(h1p, h1.orientation))
+    cap = cap.part
 
     #hook
     with BuildPart() as hook:
@@ -140,10 +147,32 @@ def run(show, export):
             mirror(about=Plane.XZ, mode=Mode.REPLACE)
         extrude(amount=hook_w/2, both=True)
         with Locations(topf.translate((0, -box_l/2 + hook_screw_1_y, hook_thickness))):
-            ClearanceHole(screw, counter_sunk=True)
+            h1=ClearanceHole(screw, counter_sunk=True)
+            LinearJoint(label="screw1", axis=Axis.Z.located(screw.hole_locations[-1]))
         with Locations(topf.translate((0, -box_l/2 + hook_screw_2_y, hook_thickness))):
             ClearanceHole(screw, counter_sunk=True)
+            LinearJoint(label="screw2", axis=Axis.Z.located(screw.hole_locations[-1]))
+        RigidJoint(label="cap_screw_1", joint_location=-h1.location)
+    hook = hook.part
 
-    show(holder, cap, hook)
+    nut1 = copy.copy(nut)
+    nut2 = copy.copy(nut)
+    screw1 = copy.copy(screw)
+    screw2 = copy.copy(screw)
+
+    holder.joints["cap"].connect_to(cap.joints["holder"], position=75)
+
+    cap.joints["nut1"].connect_to(nut1.joints["b"], position=5)
+    cap.joints["nut2"].connect_to(nut2.joints["b"], position=5)
+    cap.joints["hook_screw_1"].connect_to(hook.joints["cap_screw_1"], position=5)
+
+    hook.joints["screw1"].connect_to(screw1.joints["a"], position=5)
+    hook.joints["screw2"].connect_to(screw2.joints["a"], position=5)
+
+
+    assembly = Compound(
+        children=[holder, cap, hook, nut1, nut2, screw1, screw2]
+    )
+    show(assembly)
     export(holder, cap, hook)
 
