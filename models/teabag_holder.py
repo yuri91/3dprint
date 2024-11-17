@@ -3,9 +3,9 @@ from bd_warehouse.fastener import SocketHeadCapScrew, HexNut, ClearanceHole
 
 thickness = 1.5
 
-box_h = 120.0
-box_w = 68.2
-box_l = 78.0
+box_h = 120.0 - thickness
+box_w = 68.2 -  thickness
+box_l = 78.0 - thickness
 
 pocket_l = 78.0
 pocket_off = 34.0
