@@ -1,5 +1,5 @@
 from build123d import *  # Also works with cadquery objects!
-from bd_warehouse.fastener import SocketHeadCapScrew, ClearanceHole
+from bd_warehouse.fastener import SocketHeadCapScrew, HexNut, ClearanceHole
 
 thickness = 1.5
 
@@ -34,7 +34,7 @@ cap_tolerance = 0.15
 fillet_amount = 0.5
 
 hook_a = 85.0
-hook_thickness = 2.5
+hook_thickness = 3
 hook_w = 25.0
 hook_d = 40.0
 hook_h = 25.0
@@ -50,7 +50,7 @@ def run(show, export):
         topf = shell.faces().sort_by(Axis.Z)[-1]
         frontf = shell.faces().sort_by(Axis.Y)[0].rotate(Axis.Y, 90).translate((0, 0, -box_h/2))
         bottomf = shell.faces().sort_by(Axis.Z)[0].translate((0, -box_l/2, 0))
-        sidef = shell.faces().sort_by(Axis.X)[0].rotate(Axis.X, 90).translate((0, -box_l/2, -box_h/2))
+        sidef = shell.faces().sort_by(Axis.X)[0]
         offset(amount=thickness, openings=topf)
         shellfront = shell.faces().sort_by(Axis.Y)[0]
 
@@ -103,6 +103,9 @@ def run(show, export):
 
     holder = shell.part + pocket.part + cap_holder.part
 
+    # screw
+    screw = SocketHeadCapScrew(size="M2-0.4", length=6, simple=True)
+    nut = HexNut(size="M2-0.4")
 
     # cap
     with BuildPart() as cap:
@@ -112,18 +115,18 @@ def run(show, export):
             mirror(about=Plane.YZ.offset(box_w/2))
             make_hull()
         extrude(amount=-(box_l+thickness))
+        with Locations(-topf.translate((0, -box_l/2 + hook_screw_1_y, -cap_fill_w))):
+            ClearanceHole(nut, captive_nut=True)
+        with Locations(-topf.translate((0, -box_l/2 + hook_screw_2_y, -cap_fill_w))):
+            ClearanceHole(nut, captive_nut=True)
 
-    with Locations((0, -box_l/2 + hook_screw_1_y, box_h/2 + hook_thickness)):
-        screw = SocketHeadCapScrew(size="M2-0.4", length=6, simple=False, align=(Align.CENTER, Align.MAX, Align.MAX)).translate((0, -box_l/2 + hook_screw_1_y, box_h/2 + hook_thickness))
     #hook
     with BuildPart() as hook:
         with BuildSketch(topf.translate((0, 0, 0))) as h:
             Rectangle(hook_w, hook_d+hook_overhang, align=(Align.CENTER, Align.MAX))
-        p = extrude(amount=hook_thickness)
-        with Locations((0, -box_l/2 + hook_screw_1_y, box_h/2 + hook_thickness)):
-            ClearanceHole(screw, counter_sunk=True)
-        with BuildSketch(sidef.translate((box_w/2, -hook_overhang-thickness, box_h))):
-            with BuildLine() as l:
+        extrude(amount=hook_thickness)
+        with BuildSketch(sidef.translate((box_w/2, -hook_d-hook_overhang-thickness+hook_thickness/2, box_h/2+hook_thickness))):
+            with BuildLine(Plane.YZ) as l:
                 s1 = Line((0, 0), (hook_thickness, 0))
                 s2 = PolarLine(s1 @ 0, hook_h + hook_thickness, 90)
                 s3 = PolarLine(s1 @ 1, hook_h, 90)
@@ -131,9 +134,13 @@ def run(show, export):
                 s5 = PolarLine(s3 @ 1, hook_d, hook_a-90)
                 s6 = Line(s4 @ 1, s5 @ 1 )
             make_face()
-            mirror(about=Plane.YZ, mode=Mode.REPLACE)
+            mirror(about=Plane.XZ, mode=Mode.REPLACE)
         extrude(amount=hook_w/2, both=True)
+        with Locations(topf.translate((0, -box_l/2 + hook_screw_1_y, hook_thickness))):
+            ClearanceHole(screw, counter_sunk=True)
+        with Locations(topf.translate((0, -box_l/2 + hook_screw_2_y, hook_thickness))):
+            ClearanceHole(screw, counter_sunk=True)
 
-    show(holder, cap, hook, screw)
-    export(holder, cap)
+    show(holder, cap, hook, sidef)
+    export(holder, cap, hook)
 
