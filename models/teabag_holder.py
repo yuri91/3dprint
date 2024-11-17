@@ -97,9 +97,11 @@ def run(show, export):
     with BuildPart() as cap_holder:
         with BuildSketch(frontf.translate((-box_w/2, 0, box_h))) as c1:
             Triangle(a=cap_fill_w, b=cap_fill_w, C=90, rotation=180, align=(Align.MAX, Align.MIN))
-            fillet(c1.vertices()[0], radius=cap_fillet)
             mirror(about=Plane.YZ.offset(box_w/2))
+            #t=fillet(c1.vertices()[0], radius=cap_fillet)
         extrude(amount=-box_l-thickness)
+        f1, f2, *_ = cap_holder.edges().sort_by_distance(topf.center());
+        fillet([f1, f2], radius=cap_fillet)
 
     holder = shell.part + pocket.part + cap_holder.part
 
@@ -111,10 +113,11 @@ def run(show, export):
     with BuildPart() as cap:
         with BuildSketch(frontf.translate((-box_w/2, 0, box_h))) as c2:
             Triangle(a=cap_fill_w+cap_tolerance, b=cap_fill_w-cap_tolerance, C=90, rotation=0, align=(Align.MIN, Align.MAX))
-            fillet(c2.vertices()[0], radius=cap_fillet)
             mirror(about=Plane.YZ.offset(box_w/2))
             make_hull()
         extrude(amount=-(box_l+thickness))
+        f1, *_, f2 = cap.edges().sort_by(Axis.X);
+        fillet([f1, f2], radius=cap_fillet)
         with Locations(-topf.translate((0, -box_l/2 + hook_screw_1_y, -cap_fill_w))):
             ClearanceHole(nut, captive_nut=True)
         with Locations(-topf.translate((0, -box_l/2 + hook_screw_2_y, -cap_fill_w))):
