@@ -46,16 +46,17 @@
         "pywrap-src": "pywrap-src"
       },
       "locked": {
-        "lastModified": 1730564572,
-        "narHash": "sha256-54fQt8cHgUDpZZWWCldiBW/+XNpEx7g5t9N4bWSTn1Q=",
-        "owner": "marcus7070",
+        "lastModified": 1732488640,
+        "narHash": "sha256-sFSOVG7ib/Xt2QQ4gviJKjaQrbofCKtmxC/uyd5zBxM=",
+        "owner": "vinszent",
         "repo": "cq-flake",
-        "rev": "c3d92d3532b1379dca3fdcc57197397e02c79578",
+        "rev": "ceaa138ded2b3ea08715658b3ad6860a3281fa1a",
         "type": "github"
       },
       "original": {
-        "owner": "marcus7070",
+        "owner": "vinszent",
         "repo": "cq-flake",
+        "rev": "ceaa138ded2b3ea08715658b3ad6860a3281fa1a",
         "type": "github"
       }
     },
