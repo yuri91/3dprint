@@ -45,46 +45,58 @@ def make_filled(profile_1, profile_2, profile_3, curve_a):
     pipe = pipe_1 + bridge_1 + pipe_2 + bridge_2 + pipe_3
     return pipe
 
-def hex_pipe_joint_60():
-    profile_hex_ends = RegularPolygon((radius+thickness)*2/math.sqrt(3), 6)
-    profile_hex_middle = scale(profile_hex_ends, by=1-choke/radius)
+def pipe_joint(a, hex=True):
+    if hex:
+        profile_outer_ends = RegularPolygon((radius+thickness)*2/math.sqrt(3), 6)
+    else:
+        profile_outer_ends = Circle((radius+thickness))
+    profile_outer_middle = scale(profile_outer_ends, by=1-choke/radius)
     profile_inner_ends = Circle(radius)
     profile_inner_middle = scale(profile_inner_ends, by=1-choke/radius)
 
-    pipe_outer = make_filled(profile_hex_ends, profile_hex_middle, profile_hex_ends, curve_a)
-    pipe_inner = make_filled(profile_inner_ends, profile_inner_middle, profile_inner_ends, curve_a)
+    pipe_outer = make_filled(profile_outer_ends, profile_outer_middle, profile_outer_ends, a)
+    pipe_inner = make_filled(profile_inner_ends, profile_inner_middle, profile_inner_ends, a)
     pipe = pipe_outer - pipe_inner
     return pipe
 
-def hex_pipe_joint_in_30():
-    profile_hex_end_1 = RegularPolygon((radius+thickness)*2/math.sqrt(3), 6)
-    profile_hex_end_2 = Circle(radius-epsilon)
-    profile_hex_middle = scale(profile_hex_end_1, by=1-choke/radius)
+def pipe_joint_in(a, hex=True):
+    if hex:
+        profile_outer_end_1 = RegularPolygon((radius+thickness)*2/math.sqrt(3), 6)
+    else:
+        profile_outer_end_1 = Circle((radius+thickness))
+    profile_outer_end_2 = Circle(radius-epsilon)
+    if hex:
+        profile_outer_middle = scale(profile_outer_end_1, by=1-choke/radius)
+    else:
+        profile_outer_middle = scale(profile_outer_end_1, by=1-choke/radius/2)
     profile_inner_end_1 = Circle(radius)
     profile_inner_end_2 = Circle(radius-epsilon-thickness)
     profile_inner_middle = scale(profile_inner_end_1, by=1-choke/radius)
 
-    pipe_outer = make_filled(profile_hex_end_1, profile_hex_middle, profile_hex_end_2, 90-curve_a)
-    pipe_inner = make_filled(profile_inner_end_1, profile_inner_middle, profile_inner_end_2, 90-curve_a)
+    pipe_outer = make_filled(profile_outer_end_1, profile_outer_middle, profile_outer_end_2, 90-a)
+    pipe_inner = make_filled(profile_inner_end_1, profile_inner_middle, profile_inner_end_2, 90-a)
     pipe = pipe_outer - pipe_inner
     return pipe
 
-def hex_pipe_joint_straight():
-    profile_hex_ends = RegularPolygon((radius+thickness)*2/math.sqrt(3), 6)
-    profile_hex_middle = scale(profile_hex_ends, by=1-choke/radius)
+def pipe_joint_straight(hex=True):
+    if hex:
+        profile_outer_ends = RegularPolygon((radius+thickness)*2/math.sqrt(3), 6)
+    else:
+        profile_outer_ends = Circle((radius+thickness))
+    profile_outer_middle = scale(profile_outer_ends, by=1-choke/radius)
     profile_inner_ends = Circle(radius)
     profile_inner_middle = scale(profile_inner_ends, by=1-choke/radius)
 
-    pipe_outer = make_filled(profile_hex_ends, profile_hex_middle, profile_hex_ends, 0)
+    pipe_outer = make_filled(profile_outer_ends, profile_outer_middle, profile_outer_ends, 0)
     pipe_inner = make_filled(profile_inner_ends, profile_inner_middle, profile_inner_ends, 0)
     pipe = pipe_outer - pipe_inner
     return pipe
 
-def hex_pipe_joint_t():
-    straight = hex_pipe_joint_straight()
+def pipe_joint_t(hex=True):
+    straight = pipe_joint_straight(hex)
     height = (straight_l+merge_l)*2+curve_r
     trans = Pos(Z=height/2,X=10) * Rot(Y=90) * Pos(Z=-height/2)
-    straight_p =  trans * hex_pipe_joint_straight()
+    straight_p =  trans * pipe_joint_straight(hex)
     straight_p = straight_p.split(Plane.YZ)
     hole = Pos(X=height) * trans * extrude(Circle(radius-choke-epsilon), -straight_l-radius)
     straight = straight - hole
@@ -92,10 +104,10 @@ def hex_pipe_joint_t():
     return (straight_p+straight)
 
 def run(show, export):
-    joint_60 = hex_pipe_joint_60()
-    joint_in_30 = hex_pipe_joint_in_30()
-    joint_straight = hex_pipe_joint_straight()
-    joint_t = hex_pipe_joint_t()
+    joint_60 = pipe_joint(curve_a+10, hex=False)
+    joint_in_30 = pipe_joint_in(curve_a, hex=False)
+    joint_straight = pipe_joint_straight(hex=False)
+    joint_t = pipe_joint_t(hex=False)
 
     show(joint_60, Pos(0, radius*2.3)*joint_in_30, Pos(0, radius*2.3*2)*joint_straight, Pos(0, radius*2.3*3)*joint_t)
     export(joint_60, joint_in_30, joint_t)
