@@ -31,6 +31,13 @@
               build123d
               bd_warehouse
               cq-kit
+              python-lsp-server
+              pycodestyle
+              pyflakes
+              mccabe
+              pylsp-mypy
+              python-lsp-ruff
+              pyls-isort
               pyright
               black
               mypy
