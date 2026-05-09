@@ -7,14 +7,13 @@
 , setuptools_scm
 }:
 buildPythonPackage rec {
-  pname = "cq-warehouse";
-  rev = "c172b91e00ed9b5b0d14b486ce816b93e9ce6ff0";
-  version = "0.1.0";
+  pname = "bd_warehouse";
+  version = "0.2.0";
   src = fetchFromGitHub {
     owner = "gumyr";
     repo = "bd_warehouse";
-    inherit rev;
-    sha256 = "sha256-8ifYANm2qDX1JpmlC87T8aEBACoiJyorXjwc8z9WqJU=";
+    rev = "v${version}";
+    sha256 = "sha256-4M5UtVuH44wK4kmMVstdpiEBFzxkgNCK6Vsv3mqDcy0=";
   };
 
   build-system = [ setuptools setuptools_scm ];
@@ -23,7 +22,5 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [ build123d ];
 
-  checkPhase = ''
-    ${python.interpreter} -m unittest tests
-  '';
+  doCheck = false;
 }

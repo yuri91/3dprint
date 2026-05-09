@@ -1,42 +1,76 @@
 {
   "nodes": {
+    "cadquery-freecad-import-plugin-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1734615666,
+        "narHash": "sha256-/puHlsdDqdVbVdxOkkwMEW/S//BztFA8fNkTp9PbSYY=",
+        "owner": "jmwright",
+        "repo": "cadquery-freecad-import-plugin",
+        "rev": "a0f72aedafc80e40b486d991f8659ed4ce5eb147",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmwright",
+        "repo": "cadquery-freecad-import-plugin",
+        "type": "github"
+      }
+    },
     "cadquery-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1705326221,
-        "narHash": "sha256-f/qnq5g4FOiit9WQ7zs0axCJBITcAtqF18txMV97Gb8=",
+        "lastModified": 1741533881,
+        "narHash": "sha256-LNzo356Chh52Soi91i/z5fD9mDlh3P0saUieS5f399g=",
         "owner": "CadQuery",
         "repo": "cadquery",
-        "rev": "c44978d60cee2d61bdadf4cb4498286b7034b4c6",
+        "rev": "471ab6fcc79b6ce64b857d33d06202c030cf5459",
         "type": "github"
       },
       "original": {
         "owner": "CadQuery",
-        "ref": "2.4.0",
         "repo": "cadquery",
+        "rev": "471ab6fcc79b6ce64b857d33d06202c030cf5459",
+        "type": "github"
+      }
+    },
+    "cq-cli-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742395288,
+        "narHash": "sha256-aiLjhyQLeXy4kDW9C8n5XL2BqKGixufTgVKOPWiTZ9c=",
+        "owner": "CadQuery",
+        "repo": "cq-cli",
+        "rev": "6a6076a1659fe3cfd706cb353725e5cf3f4b4715",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CadQuery",
+        "repo": "cq-cli",
         "type": "github"
       }
     },
     "cq-editor-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1701895648,
-        "narHash": "sha256-mHXEaA6vphps6F0WemdB6fGRY4lzpcxLU7WuYEp8c20=",
+        "lastModified": 1739812831,
+        "narHash": "sha256-6cFVT+HIRoht1XPY+mvk9iTQ50Q8kqx9XxgNsRMFQ9c=",
         "owner": "CadQuery",
         "repo": "CQ-editor",
-        "rev": "4ef178af06d24a53fee87d576f8cada14c0111a3",
+        "rev": "7c92ec9d967f0f1e295a0f2dcf779ea871338e08",
         "type": "github"
       },
       "original": {
         "owner": "CadQuery",
+        "ref": "0.4.0",
         "repo": "CQ-editor",
-        "rev": "4ef178af06d24a53fee87d576f8cada14c0111a3",
         "type": "github"
       }
     },
     "cq-flake": {
       "inputs": {
+        "cadquery-freecad-import-plugin-src": "cadquery-freecad-import-plugin-src",
         "cadquery-src": "cadquery-src",
+        "cq-cli-src": "cq-cli-src",
         "cq-editor-src": "cq-editor-src",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
@@ -46,17 +80,16 @@
         "pywrap-src": "pywrap-src"
       },
       "locked": {
-        "lastModified": 1732488640,
-        "narHash": "sha256-sFSOVG7ib/Xt2QQ4gviJKjaQrbofCKtmxC/uyd5zBxM=",
-        "owner": "vinszent",
+        "lastModified": 1778312043,
+        "narHash": "sha256-n8KYJtbmuChHkmp02moD25yymdmDO1b3Q7Fga1tHv0U=",
+        "owner": "yuri91",
         "repo": "cq-flake",
-        "rev": "ceaa138ded2b3ea08715658b3ad6860a3281fa1a",
+        "rev": "0246c46720679470185122b66afa8ffde7be760c",
         "type": "github"
       },
       "original": {
-        "owner": "vinszent",
+        "owner": "yuri91",
         "repo": "cq-flake",
-        "rev": "ceaa138ded2b3ea08715658b3ad6860a3281fa1a",
         "type": "github"
       }
     },
@@ -65,11 +98,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1701680307,
-        "narHash": "sha256-kAuep2h5ajznlPMD9rnQyffWG8EM/C73lejGofXvdM8=",
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "4022d587cbbfd70fe950c1e2083a02621806a725",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
         "type": "github"
       },
       "original": {
@@ -80,11 +113,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1727634051,
-        "narHash": "sha256-S5kVU7U82LfpEukbn/ihcyNt2+EvG7Z5unsKW9H/yFA=",
+        "lastModified": 1742889210,
+        "narHash": "sha256-hw63HnwnqU3ZQfsMclLhMvOezpM7RSB0dMAtD5/sOiw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "06cf0e1da4208d3766d898b7fdab6513366d45b9",
+        "rev": "698214a32beb4f4c8e3942372c694f40848b360d",
         "type": "github"
       },
       "original": {
@@ -97,17 +130,17 @@
     "ocp-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1701196143,
-        "narHash": "sha256-PMkMYEVBHt0i7ahgqF8jLhHHp7IRS7hd+JyydovNJ4A=",
+        "lastModified": 1739132137,
+        "narHash": "sha256-vWAqCGgs7YnwHRhPAXkBQqCs+Y3zk4BMu1boZo3PLGA=",
         "owner": "cadquery",
         "repo": "ocp",
-        "rev": "4b98a5dc79fa900f7429975708f6a8c2e41cecd1",
+        "rev": "01055e099a3b1a34da38bb1f5457f06a2d4c7a18",
         "type": "github"
       },
       "original": {
         "owner": "cadquery",
+        "ref": "7.8.1.2",
         "repo": "ocp",
-        "rev": "4b98a5dc79fa900f7429975708f6a8c2e41cecd1",
         "type": "github"
       }
     },
@@ -146,11 +179,11 @@
     "pywrap-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1676015766,
-        "narHash": "sha256-QhAvJHV5tFq9bjKOzEpcudZNnmUmNVrJ+BLCZJhO31g=",
+        "lastModified": 1736233855,
+        "narHash": "sha256-u+P/SUGpYhzA1oVbEv26DF8PBEpsotEk4iXIXZhgzHc=",
         "owner": "CadQuery",
         "repo": "pywrap",
-        "rev": "f3bcde70fd66a2d884fa60a7a9d9f6aa7c3b6e16",
+        "rev": "9c9ca5b8aa0d9a6687394897815a682b8c319fb0",
         "type": "github"
       },
       "original": {

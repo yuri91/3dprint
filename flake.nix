@@ -1,6 +1,6 @@
 {
   inputs = {
-    cq-flake.url = "github:vinszent/cq-flake/ceaa138ded2b3ea08715658b3ad6860a3281fa1a";
+    cq-flake.url = "github:yuri91/cq-flake";
     nixpkgs.follows = "cq-flake/nixpkgs";
   };
 
