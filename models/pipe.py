@@ -24,12 +24,12 @@ def make_path(straight_l, curve_a, curve_r) -> Curve:
 
 def make_filled(profile_1, profile_2, profile_3, curve_a):
     path = make_path(straight_l+merge_l, curve_a, curve_r)
-    straight_fraction = straight_l / path.wire().length
-    straight_merge_fraction = (straight_l+merge_l) / path.wire().length
-    path_1 = path.split(Plane.XY * (path^straight_fraction), keep=Keep.BOTTOM)
-    path_2 = path.split(Plane.XY * (path^straight_merge_fraction), keep=Keep.TOP)
-    path_3 = path_2.split(Plane.XY * (path^(1-straight_fraction)), keep=Keep.TOP)
-    path_2 = path_2.split(Plane.XY * (path^(1-straight_merge_fraction)), keep=Keep.BOTTOM)
+    path_length = path.length
+    straight_fraction = straight_l / path_length
+    straight_merge_fraction = (straight_l+merge_l) / path_length
+    path_1 = path.trim(0, straight_fraction)
+    path_2 = path.trim(straight_merge_fraction, 1-straight_merge_fraction)
+    path_3 = path.trim(1-straight_fraction, 1)
 
     pipe_1_top_face = (path_1^1) * profile_1
     pipe_2_bottom_face = (path_2^0) * profile_2
@@ -111,4 +111,3 @@ def run(show, export):
 
     show(joint_60, Pos(0, radius*2.3)*joint_in_30, Pos(0, radius*2.3*2)*joint_straight, Pos(0, radius*2.3*3)*joint_t)
     export(joint_60, joint_in_30, joint_t)
-
